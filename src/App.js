@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import firebase from "./firebase";
 
 const App = () => {
@@ -10,6 +11,7 @@ const App = () => {
       [name]: value,
     });
   };
+
   const configureCaptcha = () => {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
       "sign-in-button",
@@ -24,6 +26,7 @@ const App = () => {
       }
     );
   };
+
   const onSignInSubmit = (e) => {
     e.preventDefault();
     configureCaptcha();
@@ -38,14 +41,17 @@ const App = () => {
         // user in with confirmationResult.confirm(code).
         window.confirmationResult = confirmationResult;
         console.log("OTP has been sent");
+        toast.success("OTP has been sent");
         // ...
       })
       .catch((error) => {
         // Error; SMS not sent
         // ...
+        toast.error(error.message);
         console.log("SMS not sent");
       });
   };
+
   const onSubmitOTP = (e) => {
     e.preventDefault();
     const code = data.otp;
@@ -56,17 +62,20 @@ const App = () => {
         // User signed in successfully.
         const user = result.user;
         console.log(JSON.stringify(user));
-        alert("User is verified");
+        // alert("User is verified");
+        toast.success("User is verified");
         // ...
       })
       .catch((error) => {
         // User couldn't sign in (bad verification code?)
         // ...
+        toast.error(error.message);
       });
   };
 
   return (
     <div>
+      <Toaster />
       <h2>Login Form</h2>
       <form onSubmit={onSignInSubmit}>
         <div id="sign-in-button"></div>
